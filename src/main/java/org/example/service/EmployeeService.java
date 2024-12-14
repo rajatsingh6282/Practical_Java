@@ -3,9 +3,8 @@ package org.example.service;
 import org.example.model.Employee;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,10 +26,8 @@ public class EmployeeService {
         employees.add(new Employee(106, "Rajat Singh", "Data Scientist", 120000, "Data Science", "2020-08-05"));
     }
 
-    public ByteArrayInputStream generateCsvAndZipGroupedByDoj() throws IOException {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream)) {
-
+    public void generateCsvAndZipGroupedByDoj(OutputStream outputStream) throws IOException {
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
             // Group employees by their DOJ
             Map<String, List<Employee>> employeesByDoj = employees.stream()
                     .collect(Collectors.groupingBy(Employee::getDateOfJoining));
@@ -48,8 +45,6 @@ public class EmployeeService {
                 zipOutputStream.closeEntry();
             }
         }
-
-        return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
     }
 
     private String createCsvContent(List<Employee> employees) {
